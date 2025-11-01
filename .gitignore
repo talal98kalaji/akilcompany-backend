@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.env/
+
+# User Uploads (لا ترفع الصور أبداً إلى Git)
+media/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# (إذا كان لديك أي ملفات كلمات سر محلية، أضفها هنا)
+# local_settings.py
