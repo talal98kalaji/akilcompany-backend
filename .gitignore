@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 
 # Virtual Environment
-.env/
+.env
 
 # User Uploads (لا ترفع الصور أبداً إلى Git)
 media/
