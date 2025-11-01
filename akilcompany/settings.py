@@ -7,24 +7,16 @@ from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
 
-# --- 1. تحميل الإعدادات الأساسية ---
 BASE_DIR = Path(__file__).resolve().parent.parent
-# (الكود الصحيح لقراءة .env من المجلد الأساسي)
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
-# --- 2. إعدادات الأمان والإنتاج (تقرأ من .env) ---
-# (استخدم مفتاح سري قوي في ملف .env الخاص بالإنتاج)
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'default-local-insecure-key-for-dev')
 
-# (DEBUG سيكون True فقط إذا كتبت 'True' في ملف .env المحلي)
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-# (أضفت '127.0.0.1' و 'localhost' ليعمل محلياً)
-ALLOWED_HOSTS = ['akilcompany.com', 'www.akilcompany.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['akilcompany.com', 'www.akilcompany.com', '148.230.108.241']
 
-
-# --- 3. التطبيقات ---
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -32,12 +24,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 3rd Party
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
     'corsheaders',
-    # My Apps
     'brand',
     'category',
     'product'
