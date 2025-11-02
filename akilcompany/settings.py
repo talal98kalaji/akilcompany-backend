@@ -127,18 +127,18 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=100),
+    'REFRESH_TOKEN_LIFETIME': timedelta(weeks=70),
 }
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://akilcompany.com",
-    "http://localhost:3000",
-    "http://127.0.0.1:8000",
+    "https://akilcompany.com", 
+    "http://localhost:3000", 
+    "http://127.0.0.1:3000",   
 ]
+
 if not DEBUG:
-    CORS_ALLOW_CREDENTIALS = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
