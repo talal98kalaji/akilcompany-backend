@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'default-local-insecure-key-for
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['akilcompany.com', 'www.akilcompany.com', '148.230.108.241']
+ALLOWED_HOSTS = ['akilcompany.com', 'www.akilcompany.com', '148.230.108.241' ,'127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -80,6 +80,22 @@ DATABASES = {
 }
 
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME':"akilcompany",
+#        'USER':'root' ,
+#        'PASSWORD':'',
+#        'HOST':"127.0.0.1",
+#        'PORT': "3306",
+#        'OPTIONS': {
+#            'init_command': "SET default_storage_engine=INNODB",
+#            
+#        },
+#    }
+#}
+#
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -114,12 +130,15 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "https://akilcompany.com",
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
 ]
-CORS_ALLOW_CREDENTIALS = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+if not DEBUG:
+    CORS_ALLOW_CREDENTIALS = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
