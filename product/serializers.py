@@ -34,13 +34,18 @@ class ProductSerializer(serializers.ModelSerializer):
         return product
 
     def update(self, instance, validated_data):
-        validated_data.pop('variants', None)         
+        variants_data = self.context.get('variants', None)
         instance.image = validated_data.get('image', instance.image)
         instance.category = validated_data.get('category', instance.category)
         instance.name_en = validated_data.get('name_en', instance.name_en)
         instance.name_ar = validated_data.get('name_ar', instance.name_ar)
         instance.description_en = validated_data.get('description_en', instance.description_en)
-        instance.description_ar = validated_data.get('description_ar', instance.description_ar)
-        
+        instance.description_ar = validated_data.get('description_ar', instance.description_ar)        
         instance.save()
+        if variants_data is not None:
+            instance.variants.all().delete()            
+            for variant_data in variants_data:
+                ProductVariant.objects.create(product=instance, **variant_data)
+
+        return instance
         return instance

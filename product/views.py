@@ -14,7 +14,6 @@ def get_all_products(request):
     category_id = request.query_params.get('category_id', None)
     if category_id is not None:
         queryset = queryset.filter(category__id=category_id)
-
     serializer = ProductSerializer(queryset, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -68,22 +67,6 @@ def get_product_by_id(request, pk):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['PUT', 'PATCH'])
-@permission_classes([IsAuthenticated, IsAdminUser])
-def update_product(request, pk):
-    product = get_product_object(pk)
-    if product is None:
-        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    partial = True if request.method == 'PATCH' else False
-    
-    serializer = ProductSerializer(product, data=request.data, partial=partial)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def delete_product(request, pk):
@@ -92,3 +75,43 @@ def delete_product(request, pk):
         return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)        
     product.delete()
     return Response({'message': 'Product deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def update_product(request, pk):
+    product = get_product_object(pk)
+    if product is None:
+        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+    partial = True if request.method == 'PATCH' else False
+    variants_data_list = None    
+    if 'variants' in request.data:
+        variants_string = request.data.get('variants', '[]')
+        try:
+            variants_data_list = json.loads(variants_string)
+            if not isinstance(variants_data_list, list):
+                raise json.JSONDecodeError
+        except json.JSONDecodeError:
+            return Response(
+                {'error': 'Invalid JSON format for variants.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )        
+        variant_serializer = ProductVariantSerializer(data=variants_data_list, many=True)
+        if not variant_serializer.is_valid():
+            return Response(
+                {'variant_errors': variant_serializer.errors}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        variants_data_list = variant_serializer.validated_data
+    context_data = {}
+    if variants_data_list is not None:
+        context_data['variants'] = variants_data_list    
+    serializer = ProductSerializer(
+        product, 
+        data=request.data, 
+        partial=partial, 
+        context=context_data)    
+    if serializer.is_valid():
+        serializer.save()        
+        response_serializer = ProductSerializer(serializer.instance)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)        
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
